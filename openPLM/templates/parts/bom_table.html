@@ -1,0 +1,82 @@
+{% load i18n plmapp_tags %}
+
+{% block content %}
+    <table class="Content bom">
+
+        {% include "parts/bom_thead.html" %}
+
+        {% with documents|key:obj.id as documents %} 
+            {% include "parts/bom_docs.html" %} 
+        {% endwith %}
+
+        {# alternates #}
+        {% with alternates|key:obj.id as alternates %} 
+            {% with c.level|add:1 as level %} 
+                {% include "parts/bom_alt.html" %} 
+            {% endwith %}
+        {% endwith %}
+
+        {% for c in children %}
+
+            <tr class="Content part"> 
+                <td class="Content {% if level != "last" %} level expander open{% endif%} level{{c.level}}" style="padding-left:{{c.level|add:"-1"}}.5em;" >
+                    {% if documents|key:c.link.child_id or alternates|key:c.link.child_id %}
+                        <span class="expander">{{c.level}}</span>
+                    {% else %}
+                        {% if forloop.last or level == "last" %}
+                            <span class="not_expander">{{c.level}}</span>
+                        {% else %}
+                            {% with forloop.counter as next %}
+                                {% with children|indice:next as ci%}
+                                    {% if ci.level > c.level %}
+                                        <span class="expander">{{c.level}}</span>
+                                    {% else %}
+                                        <span class="not_expander">{{c.level}}</span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endwith %}
+                        {% endif %}
+                    {% endif %}
+                </td>
+                {% with c.link as link %}
+                    <td class="Content order"> {{ link.order }} </td>
+                    <td class="Content quantity"> {{ link.quantity }} </td>
+                    <td class="Content"> {{ link.get_unit_display }} </td>
+                    {% with link.child as child %}
+                        <td class="Content"> 
+                            <a href="{{child.plmobject_url}}"
+                                {% if child.id in decomposable_children %}class="decomposable"{% endif %}>
+                                {{ child.reference }}
+                            </a>
+                        </td>
+                        <td class="Content"> {{ child.revision }} </td>
+                        <td class="Content"> {{ child.type }} </td>
+                        <td class="Content"> {{ child.name }} </td>
+                        {% for field, verbose_name in extra_columns %}
+                            <td class="Content"> {{ extension_data|key:link.id|key:field }} </td>
+                        {% endfor %}
+                        <td class="Content"> {{ child.state.name }} </td>
+                        <td class="Content"> {{ states|key:child.id }} </td>
+                    {% endwith %}
+                {% endwith %}
+            </tr>
+
+            {# documents #}
+            {% with documents|key:c.link.child_id as documents %} 
+                {% with c.level|add:1 as level %} 
+                    {% include "parts/bom_docs.html" %} 
+                {% endwith %}
+            {% endwith %}
+
+            {# alternates #}
+            {% with alternates|key:c.link.child_id as alternates %} 
+                {% with c.level|add:1 as level %} 
+                    {% include "parts/bom_alt.html" %} 
+                {% endwith %}
+            {% endwith %}
+
+        {% endfor %}
+    </table>
+{% endblock %}
+
+

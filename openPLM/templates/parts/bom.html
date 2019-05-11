@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load i18n plmapp_tags %}
+
+<!-- Manage html display in the Content div which correspond to the "children" menu -->
+
+{% block scripts %}
+
+    <script type="text/javascript" src="{{STATIC_URL}}js/bom.js"></script>
+    <script type="text/javascript">
+
+        function update_add_param(query){
+            var add_link = $("a.add-link");
+            var Part_group = $("#search_id_type").children("[label='Part']");
+            var part_types=[];
+            $.each($(Part_group).children(), function(i,v){
+                    part_types.push($(v).val());
+                    });
+            if($.inArray(query.type,part_types)==-1){
+                query.type = "Part";
+            }
+            add_link.attr("href","./add/" + get_search_query(query));               
+        }
+$(function() {
+        $( "#id_date_0" ).datepicker();
+        });
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+    {% if is_owner and obj.is_editable %}
+        <div class="tb-btn-toolbar">
+            <div class="tb-btn-group">
+                <a class="tb-btn tb-btn-primary add-link" 
+                    {% if obj.type|can_add_type:request.session.type %}
+                        href="./add/{% add_search %}"
+                    {% else %}
+                        href="./add/{% add_search type='Part' %}"
+                    {% endif %} >{% trans "Add an existing part" %}</a>
+                <button class="tb-btn tb-btn-primary tb-dropdown-toggle" data-toggle="dropdown">
+                    <span class="tb-caret"></span>
+                </button>
+                <ul class="tb tb-dropdown-menu">
+                    <li>
+                        <a class="add-link" 
+                           {% if obj.type|can_add_type:request.session.type %}
+                               href="./add/{% add_search %}"
+                           {% else %}
+                               href="./add/{% add_search type='Part' %}"
+                           {% endif %} >{% trans "Add an existing part" %}</a>
+                    </li>
+                    <li>
+                        <a href="/object/create/?type=Part&amp;related_parent={{obj.id}}&amp;__next__={{obj.plmobject_url|add:"BOM-child/add/"|urlencode|add:"%3Ftype%3D%23%23type%23%23%26reference%3D%23%23ref%23%23%26revision%3D%23%23rev%23%23"}}">
+                            {% trans "Create a part and add it" %}
+                        </a>
+                    </li>
+                </ul>
+             </div>
+            <a class="tb-btn tb-btn-info" href="./edit/">{% trans "EDIT" %}</a>
+        </div>
+    {% endif %}
+    <form method="GET" action="">
+        <div class="bom-form inline-form">
+            {% for field in display_form %}
+                {{ field.errors }}
+                {{ field.label_tag }}: {{ field }}
+                {% if field.name == "level" or field.name == "state" %}
+                    <br/>
+                {% endif %}
+            {% endfor %}
+            <br/>
+            <br/>
+            <input type="submit" class="tb-btn" name="update" value="{% trans "Update view" %}"/>
+            <input type="submit" class="tb-btn" name="diff" value="{% trans "Compare two BOMs" %}"/>
+        </div>
+    </form>
+    {% if decomposition_msg %}
+        <div id="decompose" class="tb-alert-info">
+            {{ decomposition_msg|safe }}
+        </div>
+    {% endif %}
+    <div>
+        {% include "parts/bom_table.html" %}        
+    </div>
+    {% if can_generate_pdf %}
+        <div class="center tb-btn-toolbar">
+            <a class="tb-btn" href="/pdf{{obj.plmobject_url}}BOM-child/{% add_get %}">
+                <span class="ui-button-text">{% trans "Download as PDF" %}</span>
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
+
+

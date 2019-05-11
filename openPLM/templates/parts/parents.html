@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load i18n plmapp_tags %}
+
+<!-- Manage html display in the Content div which correspond to the "parents" menu -->
+
+{% block scripts %}
+
+    <script type="text/javascript" src="{{STATIC_URL}}js/bom.js"></script>
+    <script>
+        $(function() {
+            $( "#id_date_0" ).datepicker();
+        });
+    </script>
+
+{% endblock %}
+
+{% block content %}
+
+    <form method="GET" action="">
+        <div class="bom-form inline-form">
+            {% for field in display_form %}
+                {{ field.errors }}
+                {{ field.label_tag }}: {{ field }}
+                {% if field.name == "level" or field.name == "state" %}
+                    <br/>
+                {% endif %}
+            {% endfor %}
+            <br/>
+            <br/>
+            <input type="submit" class="tb-btn" name="update" value="{% trans "Update view" %}"/>
+            <input type="submit" class="tb-btn" name="diff" value="{% trans "Compare two BOMs" %}"/>
+        </div>
+    </form>
+    <table class="Content">
+
+        {% include "parts/bom_thead.html" %}
+        {% for level, link in parents %}
+            <tr class="Content"> 
+                <td class="Content">-{{ level }}</td>
+                <td class="Content"> {{ link.order }} </td>
+                <td class="Content"> {{ link.quantity }} </td>
+                <td class="Content"> {{ link.get_unit_display }} </td>
+                {% with link.parent as parent %}
+                    <td class="Content"> 
+                        <a href="{{parent.plmobject_url}}">
+                            {{ parent.reference }}
+                        </a>
+                    </td>
+                    <td class="Content"> {{ parent.revision }} </td>
+                    <td class="Content"> {{ parent.type }} </td>
+                    <td class="Content"> {{ parent.name }} </td>
+                    <td class="Content"> {{ parent.state.name }} </td>
+                    <td class="Content"> {{ states|key:parent.id }} </td>
+                {% endwith %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+

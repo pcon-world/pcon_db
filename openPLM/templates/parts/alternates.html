@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load i18n plmapp_tags %}
+
+{% block content %}
+    {# toolbar #}
+    {% if is_owner and obj.is_editable %}
+        <div class="toolbar">
+            <a class="tb-btn tb-btn-primary" 
+                {% if obj.type|can_add_type:request.session.type %}
+                    href="./add/{% add_search q='' %}"
+                {% else %}
+                    href="./add/{% add_search type='Part' q='' %}"
+                {% endif %}>
+                {% trans "Add an alternate part" %}
+            </a>
+            {% if alternates %}
+                <form method="POST" action="{{obj.plmobject_url}}alternates/delete/" style="display:inline">{% csrf_token %}
+                    <input type="submit" class="tb-btn tb-btn-danger" name="delete_alternate"
+                    value="{% trans "Delete alternate links related to this part" %}"/>
+                </form>
+            {% endif %}
+        </div>
+
+    {% endif %}
+
+    {# list of alternates #}
+    <div>
+
+        {% for object in alternates %} 
+            {% if object.id != obj.id %}
+                {% include "parts/identity_card.html" %}
+            {% endif %}
+        {% empty %}
+            {% trans "No alternate parts." %}
+        {% endfor %}
+
+    </div>
+
+{% endblock %}
+
+
