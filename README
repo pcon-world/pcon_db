@@ -1,21 +1,13 @@
-# PDM “Engineers Portal”
-##### This solution aimed at bringing together specialists in engineering to make engineer projects.
+# Engineers Portal
 
 ## Target
 ##### The provide more time for comfortable intellectual work, by optimizing some processes of individual and team work of engineers. Ensuring more efficient work in engineer teams.
 
 ## Solution
-##### This is present users with a convenient and practical solution for synchronizing, repository of working materials (project data).
-##### «Engineers portal» - PDM system, independent solution for managing data about the project, is positioned as an independent solution for data management, it has integration with CAD / ECAD system.
+##### This is collaborates base components.
 
 ## for whom?
 ##### Engineers working independently and working together (the team), engineering organizations, startup etc.
-
-## Parts of the solution
-##### It solution consists of two parts aimed at improving the efficiency of working with data in make engineering, get tools for controlling data-related events, differentiating access rights, notifying and informing users.
-
-##### 1. Portal (web application) - located on the server side of the solution, provides tools for working with profiles, teams, projects, repositories, notifications and user notifications,
-##### 2. Agent of the Portal (client application) - installed on the user's local machine, performs the function of an agent, promptly notifying the user of changes, has tools for working with the repository and work copy;
 
 ## Tasks
 ##### 1. Organization of the exchange of data between team (or jobs of one engineer),
@@ -23,18 +15,6 @@
 ##### 3. View history and authors of changes and other data,
 ##### 4. Informing project participants about changes in data,
 ##### 5. Protection against accidental data intention;
-
-## Using the solution:
-##### 1. Reduce the complexity of the exchange of information
-##### 2. Save all versions and project changes
-##### 3. Simplify change analysis
-##### 4. Increase productivity
-##### 5. Differentiate access rights to data
-
----
-
-##### For implement the project, planned to use: Ruby on Rails, Mercurial, PostgreSQL, Amazon S3;
-
 
 ---
 
